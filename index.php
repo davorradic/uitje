@@ -1,4 +1,7 @@
 <?php
+//echo password_hash("tech", PASSWORD_DEFAULT);
+//exit;
+
 include_once('dbconfig.php');
 include_once('template/header.php');
 if(isset($_GET['page']) && !empty($_GET['page'])){

@@ -3,7 +3,7 @@
 <section id="contact" style="margin-top:50px;">
     <div class="container">
     <?php
-    var_dump($_POST);
+    //var_dump($_POST);
     if(isset($_POST['send'])){
       $errors = [];
         if(isset($_POST['gebruikersnaam']) && empty($_POST['gebruikersnaam'])){
@@ -11,6 +11,14 @@
         }
         if(isset($_POST['gebruikersnaam']) && strlen($_POST['gebruikersnaam']) < 6){
             $errors['gebruikersnaammaxchar_error'] = 'gebruikersnaam moet meer dan 6 karakters zijn';
+        }
+        if(isset($_POST['gebruikersnaam']) && !empty($_POST['gebruikersnaam'])){
+          $gebruikersnaam_check_sql = "SELECT * FROM users WHERE gebruikersnaam = '".$_POST['gebruikersnaam']."'";
+          $stmt = $conn->prepare($gebruikersnaam_check_sql); 
+          $stmt->execute();
+          if(count($stmt->fetchAll()) > 0){
+            $errors['gebruikersnaamingebruik_error'] = 'gebruikersnaam al in gebruik';
+          }
         }
         if(isset($_POST['wachtwoord']) && empty($_POST['wachtwoord'])){
           $errors['wachtwoord_error'] = 'vul wachtwoord in';
@@ -30,11 +38,22 @@
         if(isset($_POST['voorletters']) && empty($_POST['voorletters'])){
           $errors['voorletters_error'] = 'vul voorletters in';
         }
-        if(isset($_POST['tussenvoegsel']) && empty($_POST['tussenvoegsel'])){
+        /*if(isset($_POST['tussenvoegsel']) && empty($_POST['tussenvoegsel'])){
           $errors['tussenvoegsel_error'] = 'vul tussenvoegsel in';
-        }
+        }*/
         if(isset($_POST['achternaam']) && empty($_POST['achternaam'])){
           $errors['achternaam_error'] = 'vul achternaam in';
+        }
+        
+        if(count($errors) == 0){
+          $sql = "INSERT INTO users (gebruikersnaam, wachtwoord, rol, voorletters, tussenvoegsel, achternaam, emailadres)
+                  VALUES ('".$_POST['gebruikersnaam']."', '".$_POST['wachtwoord']."', '0', '".$_POST['voorletters']."', '".$_POST['tussenvoegsel']."', '".$_POST['achternaam']."', '".$_POST['email']."')";
+          //var_dump($sql);
+          if($conn->exec($sql) === 1){
+            $last_id = $conn->lastInsertId();
+            //var_dump($last_id);
+          }
+        
         }
         
 
@@ -55,6 +74,7 @@
                 <p class="help-block text-danger">
                     <?php echo (!empty($errors['gebruikersnaam_error']) ? $errors['gebruikersnaam_error'].'<br/>' : '');?>
                     <?php echo (!empty($errors['gebruikersnaammaxchar_error']) ? $errors['gebruikersnaammaxchar_error'] : '');?>
+                    <?php echo (!empty($errors['gebruikersnaamingebruik_error']) ? $errors['gebruikersnaamingebruik_error'] : '');?>
                 </p>
               </div>
             </div>
@@ -101,7 +121,7 @@
                 <label>Tussenvoegsel</label>
                 <input value="<?php echo (isset($_POST['tussenvoegsel']) ? $_POST['tussenvoegsel'] : '')?>" name="tussenvoegsel" class="form-control" id="tussenvoegsel" type="text" placeholder="Tussenvoegsel">
                 <p class="help-block text-danger">
-                  <?php echo (!empty($errors['tussenvoegsel_error']) ? $errors['tussenvoegsel_error'] : '');?>
+                  <?php //echo (!empty($errors['tussenvoegsel_error']) ? $errors['tussenvoegsel_error'] : '');?>
                 </p>
               </div>
             </div>

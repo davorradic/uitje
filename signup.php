@@ -35,6 +35,14 @@
         if(isset($_POST['email']) && !filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)){
           $errors['email_format_error'] = 'email is niet valid';
         }
+        if(isset($_POST['email']) && !empty($_POST['email'])){
+          $email_check_sql = "SELECT * FROM users WHERE emailadres = '".$_POST['email']."'";
+          $stmt = $conn->prepare($email_check_sql); 
+          $stmt->execute();
+          if(count($stmt->fetchAll()) > 0){
+            $errors['emailingebruik_error'] = 'email al in gebruik';
+          }
+        }
         if(isset($_POST['voorletters']) && empty($_POST['voorletters'])){
           $errors['voorletters_error'] = 'vul voorletters in';
         }
@@ -103,7 +111,9 @@
                 <input value="<?php echo (isset($_POST['email']) ? $_POST['email'] : '')?>" class="form-control" name="email" id="email" type="text" placeholder="Email Adres" >
                 <p class="help-block text-danger">
                   <?php echo (!empty($errors['email_error']) ? $errors['email_error'] : '');?><br />
-                  <?php echo (!empty($errors['email_format_error']) ? $errors['email_format_error'] : '');?>
+                  <?php echo (!empty($errors['email_format_error']) ? $errors['email_format_error'] : '');?><br />
+                  <?php echo (!empty($errors['emailingebruik_error']) ? $errors['emailingebruik_error'] : '');?>
+                  
                 </p>
               </div>
             </div>

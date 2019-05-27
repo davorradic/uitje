@@ -55,7 +55,7 @@
         
         if(count($errors) == 0){
           $sql = "INSERT INTO users (gebruikersnaam, wachtwoord, rol, voorletters, tussenvoegsel, achternaam, emailadres)
-                  VALUES ('".$_POST['gebruikersnaam']."', '".$_POST['wachtwoord']."', '0', '".$_POST['voorletters']."', '".$_POST['tussenvoegsel']."', '".$_POST['achternaam']."', '".$_POST['email']."')";
+                  VALUES ('".$_POST['gebruikersnaam']."', '".password_hash($_POST['wachtwoord'], PASSWORD_DEFAULT)."', '0', '".$_POST['voorletters']."', '".$_POST['tussenvoegsel']."', '".$_POST['achternaam']."', '".$_POST['email']."')";
           //var_dump($sql);
           if($conn->exec($sql) === 1){
             $last_id = $conn->lastInsertId();
